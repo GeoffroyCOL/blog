@@ -76,7 +76,7 @@ abstract class UserTest extends KernelTestCase
         }
 
         self::bootkernel();
-        $users = self::$container->get(UserRepository::class);
+        self::$container->get(UserRepository::class);
 
         $this->assertHasErrors($user, 1);
     }

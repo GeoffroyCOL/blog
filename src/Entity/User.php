@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -42,6 +43,10 @@ abstract class User implements UserInterface
      *      min = 6,
      *      minMessage = "Le champ username doit posséder {{ limit }} caractères.",
      * )
+     * 
+     * @Groups({
+     *      "reader.write"
+     * })
      */
     protected $username;
 
@@ -59,6 +64,10 @@ abstract class User implements UserInterface
      *      pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{6,}$/",
      *      message="Le mot de passe n'est pas bon format"
      * )
+     * 
+     * @Groups({
+     *      "reader.write"
+     * })
      */
     protected $password;
 
@@ -67,6 +76,10 @@ abstract class User implements UserInterface
      * 
      * @Assert\NotBlank
      * @Assert\Email
+     * 
+     * @Groups({
+     *      "reader.write"
+     * })
      */
     protected $email;
 

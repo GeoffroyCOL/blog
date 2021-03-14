@@ -2,11 +2,26 @@
 
 namespace App\Entity;
 
-use App\Repository\ReaderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReaderRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass=ReaderRepository::class)
+ * 
+ * 
+ * @ApiResource(
+ * 
+ *      denormalizationContext={"groups"={"reader.write"}},
+ * 
+ *      collectionOperations={
+ *          "GET",
+ *          "POST"
+ *      },
+ *      itemOperations={
+ *          "GET"
+ *      }
+ * )
  */
 class Reader extends User
 {
