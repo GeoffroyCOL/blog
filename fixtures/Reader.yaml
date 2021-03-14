@@ -1,0 +1,9 @@
+App\Entity\Reader:
+  reader_1:
+    username: reader81
+    password: \$2y\$10\$T3ZETYzvD/IfvERh6JxSku/cVISOlsNTwNkt.Q3imPRJsqU73gGme
+    email: <email()>
+  reader_{2..5}:
+    username: <username()>
+    password: \$2y\$10\$T3ZETYzvD/IfvERh6JxSku/cVISOlsNTwNkt.Q3imPRJsqU73gGme
+    email: <email()>

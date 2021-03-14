@@ -1,0 +1,5 @@
+App\Entity\Admin:
+  admin:
+    username: jojo81
+    password: \$2y\$10\$T3ZETYzvD/IfvERh6JxSku/cVISOlsNTwNkt.Q3imPRJsqU73gGme
+    email: geoffroy.colpart81\@gmail.com
