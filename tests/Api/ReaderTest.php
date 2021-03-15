@@ -44,6 +44,7 @@ class ReaderTest extends ApiTestCase
     public function testCreateReaderWithGoodData(): void
     {
         static::createClient()->request('POST', '/api/readers', [
+            'headers' => ['Content-Type' => 'application/json'],
             'json' => [
                 'username'  => 'new-reader',
                 'password'  => '123Hum',
