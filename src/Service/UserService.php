@@ -40,4 +40,18 @@ class UserService
 
         return $user;
     }
+    
+    /**
+     * delete
+     *
+     * @param  User $user
+     * @return User
+     */
+    public function delete(User $user): User
+    {
+        $this->manager->remove($user);
+        $this->manager->flush();
+
+        return $user;
+    }
 }

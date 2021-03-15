@@ -11,15 +11,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
-
     attributes: [
         "pagination_items_per_page" => 10
     ],
-
     denormalizationContext: [
         "groups" => ["reader.write"]
     ],
-
     collectionOperations: [
         "GET" => [
             "security" => "is_granted('ROLE_ADMIN')"
@@ -29,27 +26,33 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
     itemOperations: [
         "GET" => [
             "security" => "is_granted('ACCESS_USER', object)"
-        ], 
+        ],
+        "DELETE" => [
+            "security" => "is_granted('DELETE_USER', object)"
+        ]
     ],
 )]
 
 #[ApiFilter(
-    DateFilter::class, properties: [
+    DateFilter::class,
+    properties: [
         'createdAt'     => DateFilter::EXCLUDE_NULL,
         'connectedAt'   => DateFilter::EXCLUDE_NULL
     ]
 )]
 
 #[ApiFilter(
-    SearchFilter::class, properties: [
+    SearchFilter::class,
+    properties: [
         'username' => 'partial'
     ]
 )]
 
 #[ApiFilter(
-    OrderFilter::class, properties: [
+    OrderFilter::class,
+    properties: [
         'username'
-    ], 
+    ],
     arguments: [
         'orderParameterName' => 'order'
     ]

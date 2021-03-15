@@ -21,7 +21,7 @@ class UserTest extends ApiTestCase
     /**
      * testRouteNotConnected
      * @dataProvider setDataRouteForNotConnected
-     * 
+     *
      * Vérifie la réponse si un utilisateur n'est pas connecté
      *
      * @return void
@@ -50,7 +50,7 @@ class UserTest extends ApiTestCase
     /**
      * testRouteConnectedWithRoleAdmin
      * @dataProvider setDataRouteForConnectedWithRoleAdmin
-     * 
+     *
      * Vérifie si un utilisateur avec un role admin à le droit d'accèss
      *
      * @return void
@@ -80,7 +80,7 @@ class UserTest extends ApiTestCase
     /**
      * testRouteConnectedWithRoleReader
      * @dataProvider setDataRouteForConnectedWithRoleReader
-     * 
+     *
      * Vérifie si un utilisateur avec un role reader n'a pas le droit d'accèss
      *
      * @return void
@@ -110,7 +110,7 @@ class UserTest extends ApiTestCase
     /**
      * testRouteConnectedProfil
      * @dataProvider setDataRouteForConnectedProfil
-     * 
+     *
      * Vérifie si un utilisateur avec un role user peur accéder au information de son profil
      *
      * @return void
@@ -144,7 +144,7 @@ class UserTest extends ApiTestCase
 
     /**
      * testRouteNotConnected
-     * 
+     *
      * Vérifie la réponse pour un utilisateur non connecté
      *
      * @return void
@@ -158,7 +158,7 @@ class UserTest extends ApiTestCase
 
     /**
      * testRouteConnectedForEditProfil
-     * 
+     *
      * Vérifie si un utilisateur à l'autorisation de modifier ses informations
      *
      * @return void
@@ -175,8 +175,8 @@ class UserTest extends ApiTestCase
             'auth_bearer' => $json['token'],
             'json' => [
                 'email'         => 'email@domain.fr',
-                'plainPassword' => 'Hum123'
-            ]    
+                'plainPassword' => '123Hum'
+            ]
         ]);
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 

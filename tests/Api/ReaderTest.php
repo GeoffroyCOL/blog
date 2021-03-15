@@ -3,24 +3,19 @@
 namespace App\Tests\Api;
 
 use App\Tests\Traits\NeedLogin;
+use App\Repository\ReaderRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
 class ReaderTest extends ApiTestCase
-{    
+{
     use RefreshDatabaseTrait, NeedLogin;
-
-    /**
-     * --------------
-     * Test de droits
-     * --------------
-     */
 
     /**
      * testRouteNotConnected
      * @dataProvider setDataRouteForNotConnected
-     * 
+     *
      * Vérifie la réponse si un utilisateur n'est pas connecté
      *
      * @return void
@@ -48,7 +43,7 @@ class ReaderTest extends ApiTestCase
     /**
      * testRouteNotConnectedWithRoleAdmin
      * @dataProvider setDataRouteForNotConnectedWithRoleAdmin
-     * 
+     *
      * Vérifie si un utilisateur avec un role admin à le droit d'access
      *
      * @return void
@@ -77,7 +72,7 @@ class ReaderTest extends ApiTestCase
     /**
      * testRouteNotConnectedWithRoleReader
      * @dataProvider setDataRouteForNotConnectedWithRoleReader
-     * 
+     *
      * Vérifie si un utilisateur avec un role reader à le droit d'access seulement pour cette utilisateur
      *
      * @return void
@@ -105,14 +100,39 @@ class ReaderTest extends ApiTestCase
     }
 
     /**
-     * ------------------------------
-     * Test de d'insertion de données
-     * ------------------------------
+     * testRouteConnectedForDeleteProfilByReader
+     * 
+     * Vérifie si un reader à l'autorisation de supprimer ses informations
+     *
+     * @return void
      */
+    public function testRouteConnectedForDeleteProfilByReader(): void
+    {
+        $client = static::createClient();
+
+        //Non connecté
+        $client->request('DELETE', '/api/readers/3');
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $client->getResponse()->getStatusCode());
+
+        $json = $this->login($client, ['username' => 'reader81', 'password' => '0000']);
+
+        //Non autorisé
+        $client->request('DELETE', '/api/readers/3', ['auth_bearer' => $json['token'],]);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
+
+        //Autorisé
+        $client->request('DELETE', '/api/readers/2', ['auth_bearer' => $json['token'],]);
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode());
+
+        //Vérification de la suppression
+        self::bootkernel();
+        $reader = self::$container->get(ReaderRepository::class)->find(2);
+        $this->assertNull($reader);
+    }
 
     /**
      * testCreateReaderWithGoodData
-     * Pour l'ajout d'un nouvelle utilisateur de bonnes données
+     * Pour l'ajout d'un nouvelle utilisateur avec de bonnes données
      *
      * @return void
      */
