@@ -13,7 +13,7 @@ class ReaderRepositoryTest extends KernelTestCase
     public function testCount(): void
     {
         self::bootkernel();
-        $admin = self::$container->get(ReaderRepository::class)->count([]);
-        $this->assertEquals(5, $admin);
+        $reader = self::$container->get(ReaderRepository::class)->count([]);
+        $this->assertEquals(5, $reader);
     }
 }

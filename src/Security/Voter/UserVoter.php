@@ -4,10 +4,11 @@
 namespace App\Security\Voter;
 
 use App\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\Reader;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserVoter extends Voter
 {
@@ -20,7 +21,7 @@ class UserVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        $supportsAttribute = in_array($attribute, ['ACCESS_USER', 'EDIT_USER']);
+        $supportsAttribute = in_array($attribute, ['ACCESS_USER', 'EDIT_USER', 'DELETE_USER']);
         $supportsSubject = $subject instanceof User;
 
         return $supportsAttribute && $supportsSubject;
@@ -43,6 +44,12 @@ class UserVoter extends Voter
 
             case 'EDIT_USER':
                 if ($subject === $token->getUser()) {
+                    return true;
+                }
+                break;
+
+            case 'DELETE_USER':
+                if ($subject === $token->getUser() && $subject instanceof Reader) {
                     return true;
                 }
                 break;
