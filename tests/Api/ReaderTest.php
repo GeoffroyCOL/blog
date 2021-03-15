@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Api;
 
 use Symfony\Component\HttpFoundation\Response;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
@@ -44,6 +44,7 @@ class ReaderTest extends ApiTestCase
     public function testCreateReaderWithGoodData(): void
     {
         static::createClient()->request('POST', '/api/readers', [
+            'headers' => ['Content-Type' => 'application/json'],
             'json' => [
                 'username'  => 'new-reader',
                 'password'  => '123Hum',
