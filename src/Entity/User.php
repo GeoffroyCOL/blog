@@ -32,12 +32,15 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
             "path"          => "/users/profil",
             "controller"    => ProfilController::class,
             "security"      => "is_granted('ROLE_USER')"
-        ] 
+        ],
     ],
     itemOperations: [
         "GET" => [
             "security" => "is_granted('ROLE_ADMIN')" 
         ],
+        "PUT" => [
+            "security" => "is_granted('EDIT_USER', object)"
+        ]
     ],
 )]
 
@@ -113,7 +116,8 @@ abstract class User implements UserInterface
      * 
      * @Groups({
      *      "reader.write",
-     *      "user.read"
+     *      "user.read",
+     *      "user.write"
      * })
      */
     protected $email;
@@ -135,6 +139,15 @@ abstract class User implements UserInterface
      * })
      */
     protected $connectedAt;
+    
+    /**
+     * @Groups({
+     *      "user.write"
+     * })
+     *
+     * @var string|null
+     */
+    protected $plainPassword;
 
     public function __construct()
     {
@@ -291,6 +304,28 @@ abstract class User implements UserInterface
     public function setConnectedAt(?\DateTimeInterface $connectedAt): self
     {
         $this->connectedAt = $connectedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of plainPassword
+     * @return string|null
+     */ 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @param  string $plainPassword
+     * @return  self
+     */ 
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }

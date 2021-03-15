@@ -20,7 +20,7 @@ class UserVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        $supportsAttribute = in_array($attribute, ['ACCESS_USER']);
+        $supportsAttribute = in_array($attribute, ['ACCESS_USER', 'EDIT_USER']);
         $supportsSubject = $subject instanceof User;
 
         return $supportsAttribute && $supportsSubject;
@@ -37,6 +37,12 @@ class UserVoter extends Voter
         switch ($attribute) {
             case 'ACCESS_USER':
                 if ($this->security->isGranted('ROLE_ADMIN') || $subject === $token->getUser()) {
+                    return true;
+                }
+                break;
+
+            case 'EDIT_USER':
+                if ($subject === $token->getUser()) {
                     return true;
                 }
                 break;

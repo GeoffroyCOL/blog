@@ -13,6 +13,12 @@ class UserTest extends ApiTestCase
     use RefreshDatabaseTrait, NeedLogin;
 
     /**
+     * --------------
+     * Test de droits
+     * --------------
+     */
+
+    /**
      * testRouteNotConnected
      * @dataProvider setDataRouteForNotConnected
      * 
@@ -134,5 +140,54 @@ class UserTest extends ApiTestCase
         return [
             ['/api/users/profil', Response::HTTP_OK],
         ];
+    }
+
+    /**
+     * testRouteNotConnected
+     * 
+     * Vérifie la réponse pour un utilisateur non connecté
+     *
+     * @return void
+     */
+    public function testRouteNotConnectedForEditProfil(): void
+    {
+        $client = static::createClient();
+        $client->request('PUT', '/api/users/1');
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * testRouteConnectedForEditProfil
+     * 
+     * Vérifie si un utilisateur à l'autorisation de modifier ses informations
+     *
+     * @return void
+     */
+    public function testRouteConnectedForEditProfil(): void
+    {
+        $client = static::createClient();
+
+        //user avec l'id 1
+        $json = $this->login($client, ['username' => 'jojo81', 'password' => '0000']);
+
+        //Autorisation
+        $client->request('PUT', '/api/users/1', [
+            'auth_bearer' => $json['token'],
+            'json' => [
+                'email'         => 'email@domain.fr',
+                'plainPassword' => 'Hum123'
+            ]    
+        ]);
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        //Non-Autorisé
+        $client->request('PUT', '/api/users/2', [
+            'auth_bearer' => $json['token'],
+            'json' => [
+                'email'         => 'email@domain.fr',
+                'plainPassword' => 'Hum123'
+            ]
+        ]);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 }
