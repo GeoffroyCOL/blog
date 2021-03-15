@@ -4,13 +4,42 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Controller\ProfilController;
 use Doctrine\ORM\Mapping\InheritanceType;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+#[ApiResource(
+
+    denormalizationContext: [
+        "groups" => ["user.write"]
+    ],
+    normalizationContext: [
+        "groups" => ["user.read"]
+    ],
+
+    collectionOperations: [
+        "GET" => [
+            "security" => "is_granted('ROLE_ADMIN')"
+        ],
+        "GET_PROFIL" => [
+            "method"        => "GET",
+            "path"          => "/users/profil",
+            "controller"    => ProfilController::class,
+            "security"      => "is_granted('ROLE_USER')"
+        ] 
+    ],
+    itemOperations: [
+        "GET" => [
+            "security" => "is_granted('ROLE_ADMIN')" 
+        ],
+    ],
+)]
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -45,13 +74,18 @@ abstract class User implements UserInterface
      * )
      * 
      * @Groups({
-     *      "reader.write"
+     *      "reader.write",
+     *      "user.read"
      * })
      */
     protected $username;
 
     /**
      * @ORM\Column(type="json")
+     * 
+     * @Groups({
+     *      "user.read"
+     * })
      */
     protected $roles = [];
 
@@ -78,18 +112,27 @@ abstract class User implements UserInterface
      * @Assert\Email
      * 
      * @Groups({
-     *      "reader.write"
+     *      "reader.write",
+     *      "user.read"
      * })
      */
     protected $email;
 
     /**
      * @ORM\Column(type="datetime")
+     * 
+     * @Groups({
+     *      "user.read"
+     * })
      */
     protected $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * 
+     * @Groups({
+     *      "user.read"
+     * })
      */
     protected $connectedAt;
 
