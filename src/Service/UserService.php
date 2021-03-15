@@ -26,7 +26,17 @@ class UserService
      */
     public function persist(User $user): User
     {
-        $this->password($user);
+        if ($user->getPlainPassword()) {
+            $user->setPassword(
+                $this->encoder->encodePassword($user, $user->getPlainPassword())
+            );
+            $user->eraseCredentials();
+        }
+
+        if (! $user->getId()) {
+            $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        }
+
         $this->manager->persist($user);
         $this->manager->flush();
 

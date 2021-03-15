@@ -101,7 +101,7 @@ class ReaderTest extends ApiTestCase
 
     /**
      * testRouteConnectedForDeleteProfilByReader
-     * 
+     *
      * Vérifie si un reader à l'autorisation de supprimer ses informations
      *
      * @return void
