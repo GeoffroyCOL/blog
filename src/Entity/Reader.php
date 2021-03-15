@@ -6,22 +6,27 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReaderRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 
+
+#[ApiResource(
+    denormalizationContext: [
+        "groups" => ["reader.write"]
+    ],
+
+    collectionOperations: [
+        "GET" => [
+            "security_post_denormalize" => "is_granted('ROLE_ADMIN')"
+        ],
+        "POST"
+    ],
+    itemOperations: [
+        "GET" => [
+            "security" => "is_granted('ACCESS_USER', object)"
+        ], 
+    ],
+)]
+
 /**
  * @ORM\Entity(repositoryClass=ReaderRepository::class)
- * 
- * 
- * @ApiResource(
- * 
- *      denormalizationContext={"groups"={"reader.write"}},
- * 
- *      collectionOperations={
- *          "GET",
- *          "POST"
- *      },
- *      itemOperations={
- *          "GET"
- *      }
- * )
  */
 class Reader extends User
 {

@@ -2,21 +2,30 @@
 
 namespace App\Tests\Api;
 
+use App\Tests\Traits\NeedLogin;
 use Symfony\Component\HttpFoundation\Response;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
 class ReaderTest extends ApiTestCase
 {    
-    use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait, NeedLogin;
 
     /**
-     * testGetCollection
-     * @dataProvider setDataForMethodGet
+     * --------------
+     * Test de droits
+     * --------------
+     */
+
+    /**
+     * testRouteNotConnected
+     * @dataProvider setDataRouteForNotConnected
+     * 
+     * Vérifie la réponse si un utilisateur n'est pas connecté
      *
      * @return void
      */
-    public function testGetCollection(string $route, int $response): void
+    public function testRouteNotConnected(string $route, int $response): void
     {
         $client = static::createClient();
         $client->request('GET', $route);
@@ -24,16 +33,82 @@ class ReaderTest extends ApiTestCase
     }
     
     /**
-     * setDataForMethodGet
+     * setDataRouteForNotConnected
      *
      * @return array
      */
-    public function setDataForMethodGet(): array
+    public function setDataRouteForNotConnected(): array
     {
         return [
-            ['/api/readers',    Response::HTTP_OK]
+            ['/api/readers',    Response::HTTP_UNAUTHORIZED],
+            ['/api/readers/2',  Response::HTTP_UNAUTHORIZED],
         ];
     }
+
+    /**
+     * testRouteNotConnectedWithRoleAdmin
+     * @dataProvider setDataRouteForNotConnectedWithRoleAdmin
+     * 
+     * Vérifie si un utilisateur avec un role admin à le droit d'access
+     *
+     * @return void
+     */
+    public function testRouteNotConnectedWithRoleAdmin(string $route, int $response): void
+    {
+        $client = static::createClient();
+        $json = $this->login($client, ['username' => 'jojo81', 'password' => '0000']);
+        $client->request('GET', $route, ['auth_bearer' => $json['token']]);
+        $this->assertEquals($response, $client->getResponse()->getStatusCode());
+    }
+    
+    /**
+     * setDataRouteForNotConnectedWithRoleAdmin
+     *
+     * @return array
+     */
+    public function setDataRouteForNotConnectedWithRoleAdmin(): array
+    {
+        return [
+            ['/api/readers',    Response::HTTP_OK],
+            ['/api/readers/2',  Response::HTTP_OK],
+        ];
+    }
+
+    /**
+     * testRouteNotConnectedWithRoleReader
+     * @dataProvider setDataRouteForNotConnectedWithRoleReader
+     * 
+     * Vérifie si un utilisateur avec un role reader à le droit d'access seulement pour cette utilisateur
+     *
+     * @return void
+     */
+    public function testRouteNotConnectedWithRoleReader(string $route, int $response): void
+    {
+        $client = static::createClient();
+        $json = $this->login($client, ['username' => 'reader81', 'password' => '0000']);
+        $client->request('GET', $route, ['auth_bearer' => $json['token']]);
+        $this->assertEquals($response, $client->getResponse()->getStatusCode());
+    }
+    
+    /**
+     * setDataRouteForNotConnectedWithRoleReader
+     *
+     * @return array
+     */
+    public function setDataRouteForNotConnectedWithRoleReader(): array
+    {
+        return [
+            ['/api/readers',    Response::HTTP_FORBIDDEN],
+            ['/api/readers/3',  Response::HTTP_FORBIDDEN],
+            ['/api/readers/2',  Response::HTTP_OK]
+        ];
+    }
+
+    /**
+     * ------------------------------
+     * Test de d'insertion de données
+     * ------------------------------
+     */
 
     /**
      * testCreateReaderWithGoodData
@@ -64,6 +139,7 @@ class ReaderTest extends ApiTestCase
     {
         $client = static::createClient();
         $client->request('POST', '/api/readers', [
+            'headers' => ['Content-Type' => 'application/json'],
             'json' => [
                 'username'  => 'new',
                 'password'  => '123Hum',
