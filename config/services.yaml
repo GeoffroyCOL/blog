@@ -39,3 +39,4 @@ services:
         autoconfigure: false
 
     App\DataPersister\UserDataPersister: ~
+    App\DataPersister\CategoryDataPersister: ~
