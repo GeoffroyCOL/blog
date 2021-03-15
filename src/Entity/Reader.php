@@ -4,17 +4,25 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReaderRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 #[ApiResource(
+
+    attributes: [
+        "pagination_items_per_page" => 10
+    ],
+
     denormalizationContext: [
         "groups" => ["reader.write"]
     ],
 
     collectionOperations: [
         "GET" => [
-            "security_post_denormalize" => "is_granted('ROLE_ADMIN')"
+            "security" => "is_granted('ROLE_ADMIN')"
         ],
         "POST"
     ],
@@ -23,6 +31,28 @@ use ApiPlatform\Core\Annotation\ApiResource;
             "security" => "is_granted('ACCESS_USER', object)"
         ], 
     ],
+)]
+
+#[ApiFilter(
+    DateFilter::class, properties: [
+        'createdAt'     => DateFilter::EXCLUDE_NULL,
+        'connectedAt'   => DateFilter::EXCLUDE_NULL
+    ]
+)]
+
+#[ApiFilter(
+    SearchFilter::class, properties: [
+        'username' => 'partial'
+    ]
+)]
+
+#[ApiFilter(
+    OrderFilter::class, properties: [
+        'username'
+    ], 
+    arguments: [
+        'orderParameterName' => 'order'
+    ]
 )]
 
 /**
