@@ -1,0 +1,7 @@
+App\Entity\Category:
+  category_1:
+    name: Catégorie
+    slug: categorie
+  category_{2..10}:
+    name: <word()>
+    slug: <word()>
