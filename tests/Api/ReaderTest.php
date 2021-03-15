@@ -101,7 +101,7 @@ class ReaderTest extends ApiTestCase
 
     /**
      * testRouteConnectedForDeleteProfilByReader
-     * 
+     *
      * Vérifie si un reader à l'autorisation de supprimer ses informations
      *
      * @return void
@@ -117,11 +117,11 @@ class ReaderTest extends ApiTestCase
         $json = $this->login($client, ['username' => 'reader81', 'password' => '0000']);
 
         //Non autorisé
-        $client->request('DELETE', '/api/readers/3', ['auth_bearer' => $json['token'],]);
+        $client->request('DELETE', '/api/readers/3', ['auth_bearer' => $json['token']]);
         $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
 
         //Autorisé
-        $client->request('DELETE', '/api/readers/2', ['auth_bearer' => $json['token'],]);
+        $client->request('DELETE', '/api/readers/2', ['auth_bearer' => $json['token']]);
         $this->assertEquals(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode());
 
         //Vérification de la suppression

@@ -4,15 +4,29 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CategoryRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ApiResource(
     attributes: [
-        "pagination_items_per_page" => 10
+        "pagination_items_per_page" => 10,
+        "security"                  => "is_granted('ROLE_ADMIN')"
+    ],
+    denormalizationContext: [
+        "groups" => ["category.write"]
+    ],
+    itemOperations: [
+        "GET",
+        "PUT",
+        "DELETE"
     ]
 )]
+
+#[ApiFilter(SearchFilter::class, properties: ["name" => "partial"])]
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -32,12 +46,16 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * 
+     *
      * @Assert\NotBlank
      * @Assert\Length(
      *      min = 4,
      *      minMessage = "Ce champ doit posséder {{ limit }} caractères.",
      * )
+     *
+     * @Groups({
+     *      "category.write"
+     * })
      */
     private $name;
 
